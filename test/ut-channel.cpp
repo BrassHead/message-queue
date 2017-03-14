@@ -297,10 +297,10 @@ int main( int argc, char *argv[] )
     auto fails = selftest::runUnitTests<0>();
 
     if ( 0==fails.numFailedTests ) {
-        cerr << "\n\n\nchannel.hpp testing completed successfully\n";
+        cerr << "\n\nchannel.hpp testing completed successfully\n\n";
         return 0;
     } else {
-        cerr << "\n\n\nUnit testing of channel.hpp failed\n";
+        cerr << "\n\nUnit testing of channel.hpp failed\n\n";
         return 1;
     }
 }

@@ -1,6 +1,15 @@
 # Simple Makefile
 #
 
+all: test demo
+
+demo: ../Build/demo
+	../Build/demo
+
+../Build/demo: demo.cpp ../channel.hpp
+	mkdir -p ../Build
+	c++ -std=c++11 -I../External/selftest -I.. -Wall -Werror -g -DDEBUG -o ../Build/demo demo.cpp
+
 test: ../Build/ut-channel
 	../Build/ut-channel
 
