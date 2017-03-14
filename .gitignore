@@ -1,0 +1,46 @@
+# Mooltipass .gitignore 
+#
+
+# OS/X
+#
+.DS_Store
+
+# Visual Studio Code
+#
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+browse.VC.db
+
+# build directories
+#
+[Dd]ebug/
+[Rr]elease/
+Build
+
+# Visual studio
+#
+.vs/
+
+# xcode
+#
+*.xcuserstate
+xcuserdata/
+
+# Executables and friends
+#
+*.exe
+*.ilk
+*.obj
+*.pdb
+*.sdf
+*.o
+
+# Node and friends
+#
+node_modules
+
+# Dependencies
+#
+External/
