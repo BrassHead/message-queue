@@ -22,7 +22,6 @@ SOFTWARE.
 
 */
 
-// TODO: Remove this dependency #include "selftest.hpp"
 #include <mutex>
 #include <condition_variable>
 #include <vector>
@@ -35,90 +34,86 @@ class utchannel;
 template<typename Msg>
 class channel {
 public:
-	// One hour backlog of 100ms tasks
-	static constexpr int maxReasonableLength = 36000;
+    // NO justiifcation for this number, just a sanity check
+    static constexpr int    maxReasonableLength = 1000000;
 
-	channel(int maxQueueLength=1)
-	  : queue(maxQueueLength),
-		front(-1),
-		back(0),
-		capacity(maxQueueLength)
-	{
-		if( maxQueueLength<=0 )
-			BAD_ARG( "Queue too short" );
+    channel(int maxQueueLength=1)
+      : queue(maxQueueLength),
+        front(-1),
+        back(0),
+        capacity(maxQueueLength)
+    {
+        if( maxQueueLength<=0 )
+            throw std::invalid_argument( "Queue too short" );
 		if( maxQueueLength>maxReasonableLength )
-			OVER_LIMIT( "Queue too long" );
-		ASSERT( valid() );
-	}
+			throw std::invalid_argument( "Queue too long" );
+    }
 
-	~channel() noexcept {
-		IFASSERTING( capacity=0xdeadbeef );		// invalidate
-	}
+    ~channel() noexcept {
+    }
 
-	channel(const channel&) = delete;
-	channel(channel&&) = delete;
-	channel& operator=(const channel&) = delete;
-	channel& operator=(channel&&) = delete;
+    channel(const channel&) = delete;
+    channel(channel&&) = delete;
+    channel& operator=(const channel&) = delete;
+    channel& operator=(channel&&) = delete;
 
-	void send(Msg msg) {
-		ASSERT( valid() );
-		std::unique_lock<std::mutex> lck(mtx);
-		while (full())
-			fullwait.wait(lck);
-		queue[back] = std::move(msg);
-		nextback();
-		lck.unlock();
-		emptywait.notify_one();
-	}
+    void send(Msg msg) {
+        std::unique_lock<std::mutex> lck(mtx);
+        while (full())
+            fullwait.wait(lck);
+        queue[back] = std::move(msg);
+        nextback();
+        lck.unlock();
+        emptywait.notify_one();
+    }
 
-	Msg get() {
-		ASSERT( valid() );
-		std::unique_lock<std::mutex> lck(mtx);
-		while (empty())
-			emptywait.wait(lck);
-		Msg msg = std::move(queue[front]);
-		nextfront();
-		lck.unlock();
-		fullwait.notify_one();
-		return msg;
-	}
+    Msg get() {
+        std::unique_lock<std::mutex> lck(mtx);
+        while (empty())
+            emptywait.wait(lck);
+        Msg msg = std::move(queue[front]);
+        nextfront();
+        lck.unlock();
+        fullwait.notify_one();
+        return msg;
+    }
 
-	bool valid() {
-		std::unique_lock<std::mutex> lck(mtx);
-		return unsyncedSelftest();
-	}
+    bool valid() {
+        std::unique_lock<std::mutex> lck(mtx);
+        return unsyncedSelftest();
+    }
 
 private:
-	friend class utchannel<Msg>;
-	
-	std::mutex					mtx;
-	std::condition_variable		fullwait, emptywait;
-	std::vector<Msg>			queue;
-	int							front, back, capacity;
+    friend class utchannel<Msg>;
+    
+    std::mutex					mtx;
+    std::condition_variable		fullwait, emptywait;
+    std::vector<Msg>			queue;
+    int							front, back, capacity;
 
-	bool empty() {
-		return front==-1;
-	}
+    bool empty() {
+        return front==-1;
+    }
 
-	bool full() {
-		return front==back;
-	}
+    bool full() {
+        return front==back;
+    }
 
-	void nextfront() {
-		front = (front+1) % capacity;
-		if (front==back)
-			front = -1;
-	}
-	void nextback() {
-		if (front==-1)
-			front = back;
-		back = (back+1) % capacity;
-	}
+    void nextfront() {
+        front = (front+1) % capacity;
+        if (front==back)
+            front = -1;
+    }
+    void nextback() {
+        if (front==-1)
+            front = back;
+        back = (back+1) % capacity;
+    }
 
-	bool unsyncedSelftest() {
-		bool valid  = (  0 <  capacity ) & ( capacity <= maxReasonableLength );
-			 valid &= (  0 <=     back ) & ( back     <  capacity );
-			 valid &= ( -1 <=    front ) & ( front    <  capacity );
-		return valid && ( capacity == int(queue.size()) );
-	}
+    bool unsyncedSelftest() {
+        bool valid  = (  0 <  capacity ) & ( capacity <= maxReasonableLength );
+             valid &= (  0 <=     back ) & ( back     <  capacity );
+             valid &= ( -1 <=    front ) & ( front    <  capacity );
+        return valid && ( capacity == int(queue.size()) );
+    }
 };
