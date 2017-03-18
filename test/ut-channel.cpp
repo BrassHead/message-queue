@@ -290,16 +290,3 @@ TEST_FUNCTION( competing_consumers )
 
 } // unnamed namespace
 
-int main( int argc, char *argv[] )
-{
-    trace << "Starting test sequence.\n\n\n";
-    auto fails = selftest::runUnitTests<0>();
-
-    if ( 0==fails.numFailedTests ) {
-        cerr << "\n\nchannel.hpp testing completed successfully\n\n";
-        return 0;
-    } else {
-        cerr << "\n\nUnit testing of channel.hpp failed\n\n";
-        return 1;
-    }
-}

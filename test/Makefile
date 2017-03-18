@@ -13,9 +13,13 @@ demo: ../Build/demo
 test: ../Build/ut-channel
 	../Build/ut-channel
 
-../Build/ut-channel: ut-channel.cpp ../channel.hpp ../External/selftest/selftest.hpp 
+../Build/ut-channel: ../Build/ut-channel.o ut-main.cpp ../External/selftest/selftest.hpp
 	mkdir -p ../Build
-	c++ -std=c++11 -I../External/selftest -I.. -Wall -Werror -g -DDEBUG -o ../Build/ut-channel ut-channel.cpp
+	c++ -std=c++11 -I../External/selftest -I.. -Wall -Werror -g -DDEBUG -o ../Build/ut-channel ut-main.cpp ../Build/ut-channel.o
+
+../Build/ut-channel.o: ut-channel.cpp ../channel.hpp ../External/selftest/selftest.hpp
+	mkdir -p ../Build
+	c++ -c -std=c++11 -I../External/selftest -I.. -Wall -Werror -g -DDEBUG -o ../Build/ut-channel.o ut-channel.cpp
 
 ../External/selftest/selftest.hpp:
 	mkdir -p ../External
