@@ -5,7 +5,7 @@ Copyright © 2013 Brian Bray
 
 */
 
-#define TRACING 1
+#define TRACING 0
 #include "selftest.hpp"
 using selftest::selftest_error;
 using selftest::over_reasonable_limit;
@@ -45,7 +45,6 @@ public:
     }
 
     void send(Msg msg) {
-        // No Preconditions
         ASSERT( this->valid() );
         channel<Msg>::send(std::move(msg));
         CHECKIF( this->valid() );
@@ -146,15 +145,6 @@ TEST_FUNCTION( constructor_tests )
                     std::invalid_argument );
     CHECKIFTHROWS(	utchannel<int>(channel<int>::maxReasonableLength+1),
                     std::invalid_argument );
-}
-
-TEST_FUNCTION( destructor_tests )
-{
-    trace << "destructor_tests\n";
-    CHECKIFTHROWS(	utchannel<int> bad; bad.invalidate(); bad.send(1),
-                    selftest_error );
-    CHECKIFTHROWS(	utchannel<int> bad; bad.invalidate(); bad.get(),
-                    selftest_error );
 }
 
 

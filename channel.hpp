@@ -49,9 +49,6 @@ public:
 			throw std::invalid_argument( "Queue too long" );
     }
 
-    ~channel() noexcept {
-    }
-
     channel(const channel&) = delete;
     channel(channel&&) = delete;
     channel& operator=(const channel&) = delete;
