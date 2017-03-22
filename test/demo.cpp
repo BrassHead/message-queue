@@ -24,6 +24,15 @@ SOFTWARE.
 
 */
 
+// Parallel sieve for prime numbers. Counts the number of primes less than 'n'.
+// Demonstration of message queue.
+// Counts the number of primes less than 'n' using a parallel pipeline
+// n/2 integers will be queued at the start of the pipeline, primes<n will
+// be channeled to the last stage.
+//
+// This is not optimal for primes, but it does use exercise the channels a lot.
+//
+
 #include <iostream>
 using std::cout;
 #include <thread>
@@ -34,17 +43,14 @@ using std::vector;
 #include "channel.hpp"
 
 using vlong = long long;
-
-
 static const vlong kilo = 1000;
 static const vlong mega = kilo*kilo;
 // static const vlong giga = kilo*mega;
 
-// Parallel sieve for prime numbers. Counts the number of primes less than 'n'.
 //
 // Parameters 
-static const vlong n = 1*mega;          // Search up to 'n'
 typedef int ptype;                      // An integral type large enough for n
+static const ptype n = 1*mega;          // Search up to 'n'
 static const int checksize = 1000;      // How many primes to divide per check
 static const int ncheckers = 2;         // Number of checkers spawned per layer
 
