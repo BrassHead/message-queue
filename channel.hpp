@@ -1,6 +1,6 @@
-/* channel.h - Inter-thread message queues
+/* channel.hpp - Inter-thread message queues
 
-Copyright © 2013-2017 Brian Bray
+Copyright © 2013-2018 Brian Bray
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
